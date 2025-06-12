@@ -1,0 +1,118 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "welcome": "Bienvenue"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "appointments": "Rendez-vous",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "S'inscrire"
+  },
+  "auth": {
+    "login": {
+      "title": "Connectez-vous à votre compte",
+      "subtitle": "Bienvenue sur DentaCare",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion...",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "createAccount": "Créez-en un ici",
+      "orContinueWith": "Ou continuer avec",
+      "google": "Continuer avec Google",
+      "success": "Connexion réussie !",
+      "error": "Identifiants invalides. Veuillez réessayer."
+    },
+    "register": {
+      "title": "Créez votre compte",
+      "subtitle": "Rejoignez DentaCare aujourd'hui",
+      "fullName": "Nom complet",
+      "email": "Adresse e-mail",
+      "phone": "Numéro de téléphone",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "Créer un compte",
+      "submitting": "Création du compte...",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "signIn": "Connectez-vous ici",
+      "success": "Compte créé avec succès ! Veuillez vous connecter.",
+      "error": "Échec de l'inscription. Veuillez réessayer."
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour, {name}",
+    "subtitle": "Voici ce qui se passe avec vos rendez-vous",
+    "stats": {
+      "upcoming": "À venir",
+      "completed": "Terminés",
+      "cancelled": "Annulés",
+      "total": "Total"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "bookAppointment": "Prendre rendez-vous",
+      "viewAppointments": "Voir les rendez-vous",
+      "manageAppointments": "Gérer tous les rendez-vous"
+    }
+  },
+  "appointments": {
+    "title": "Rendez-vous",
+    "myAppointments": "Mes rendez-vous",
+    "bookNew": "Nouveau rendez-vous",
+    "upcoming": "À venir",
+    "history": "Historique",
+    "noUpcoming": "Vous n'avez aucun rendez-vous à venir.",
+    "noHistory": "Vous n'avez aucun rendez-vous passé.",
+    "status": {
+      "scheduled": "Programmé",
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "confirmed": "Confirmé"
+    },
+    "booking": {
+      "title": "Prendre un nouveau rendez-vous",
+      "subtitle": "Remplissez les détails ci-dessous pour planifier votre visite",
+      "service": "Sélectionner un service",
+      "selectService": "Veuillez sélectionner un service",
+      "date": "Date",
+      "time": "Heure",
+      "submit": "Confirmer la réservation",
+      "submitting": "Planification...",
+      "success": "Rendez-vous réservé avec succès !",
+      "error": "Impossible de réserver le rendez-vous. Veuillez réessayer."
+    },
+    "services": {
+      "checkup": "Contrôle annuel et nettoyage",
+      "whitening": "Blanchiment des dents",
+      "filling": "Plombage de carie",
+      "rootCanal": "Traitement de canal",
+      "extraction": "Extraction de dent de sagesse",
+      "consultation": "Consultation",
+      "emergency": "Visite d'urgence"
+    }
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  }
+}

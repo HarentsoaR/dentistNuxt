@@ -1,0 +1,118 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "welcome": "Welcome"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "subtitle": "Welcome back to DentaCare",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create one here",
+      "orContinueWith": "Or continue with",
+      "google": "Continue with Google",
+      "success": "Successfully signed in!",
+      "error": "Invalid credentials. Please try again."
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Join DentaCare today",
+      "fullName": "Full Name",
+      "email": "Email address",
+      "phone": "Phone Number",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Create Account",
+      "submitting": "Creating Account...",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in here",
+      "success": "Account created successfully! Please sign in.",
+      "error": "Registration failed. Please try again."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {name}",
+    "subtitle": "Here's what's happening with your appointments",
+    "stats": {
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "total": "Total"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "bookAppointment": "Book Appointment",
+      "viewAppointments": "View Appointments",
+      "manageAppointments": "Manage All Appointments"
+    }
+  },
+  "appointments": {
+    "title": "Appointments",
+    "myAppointments": "My Appointments",
+    "bookNew": "Book New Appointment",
+    "upcoming": "Upcoming",
+    "history": "History",
+    "noUpcoming": "You have no upcoming appointments.",
+    "noHistory": "You have no past appointments.",
+    "status": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "confirmed": "Confirmed"
+    },
+    "booking": {
+      "title": "Book a New Appointment",
+      "subtitle": "Fill in the details below to schedule your visit",
+      "service": "Select a Service",
+      "selectService": "Please select a service",
+      "date": "Date",
+      "time": "Time",
+      "submit": "Confirm Booking",
+      "submitting": "Scheduling...",
+      "success": "Appointment booked successfully!",
+      "error": "Could not book appointment. Please try again."
+    },
+    "services": {
+      "checkup": "Annual Check-up and Cleaning",
+      "whitening": "Teeth Whitening",
+      "filling": "Cavity Filling",
+      "rootCanal": "Root Canal Therapy",
+      "extraction": "Wisdom Tooth Extraction",
+      "consultation": "Consultation",
+      "emergency": "Emergency Visit"
+    }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}
