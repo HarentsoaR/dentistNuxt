@@ -162,7 +162,7 @@
               <p class="text-center text-sm text-gray-600">
                 Already have an account?
                 <NuxtLink 
-                  to="/auth/login" 
+                  to="/auth/login?from=register" 
                   class="font-semibold text-teal-600 hover:text-teal-500 transition-colors duration-200"
                 >
                   Sign in here
@@ -193,6 +193,7 @@ import { ref, onMounted, nextTick } from 'vue';
 import { useForm } from 'vee-validate';
 import { required, min, email, confirmed } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
+import { useNotificationStore } from '~/stores/notification';
 
 defineRule('required', required);
 defineRule('min', min);
@@ -204,9 +205,10 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
+const notificationStore = useNotificationStore();
 const router = useRouter();
 
-const showForm = ref(true); // Default to true so form is always shown
+const showForm = ref(true);
 const headerSection = ref<HTMLElement | null>(null);
 const formSection = ref<HTMLElement | null>(null);
 
@@ -219,18 +221,10 @@ onMounted(() => {
     if (formSection.value) {
       setTimeout(() => {
         if (formSection.value) {
-          if (formSection.value) {
-            if (formSection.value) {
-              if (formSection.value) {
-                if (formSection.value) {
-                  formSection.value.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                  });
-                }
-              }
-            }
-          }
+          formSection.value.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
         }
       }, 100);
     }
@@ -243,10 +237,12 @@ const toggleForm = async () => {
   
   if (showForm.value && formSection.value) {
     setTimeout(() => {
-      formSection.value.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-      });
+      if (formSection.value) {
+        formSection.value.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
     }, 100);
   } else if (!showForm.value && headerSection.value) {
     headerSection.value.scrollIntoView({ 
@@ -277,11 +273,8 @@ const onSubmit = handleSubmit(async (values) => {
     
     router.push({ path: '/auth/login', query: { registered: 'true' } });
   } catch (error: any) {
-    if (error.data && error.data.error) {
-      alert(`Registration failed: ${error.data.error}`);
-    } else {
-      alert('An unknown error occurred during registration.');
-    }
+    // Error handling is now done in the auth store
+    console.error('Registration error:', error);
   }
 });
 </script>

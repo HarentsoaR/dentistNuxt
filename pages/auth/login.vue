@@ -91,7 +91,6 @@
                   required
                   placeholder="you@example.com"
                   class="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-gray-50/50 focus:bg-white"
-                  :class="{ 'border-red-300 focus:ring-red-500 bg-red-50': errorMessage }"
                 />
               </div>
             </div>
@@ -112,7 +111,6 @@
                   required
                   placeholder="Enter your password"
                   class="block w-full pl-10 pr-12 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-gray-50/50 focus:bg-white"
-                  :class="{ 'border-red-300 focus:ring-red-500 bg-red-50': errorMessage }"
                 />
                 <button
                   type="button"
@@ -123,16 +121,6 @@
                 </button>
               </div>
             </div>
-
-            <!-- Error Message -->
-            <transition name="fade">
-              <div v-if="errorMessage" class="rounded-xl bg-red-50 p-4 border border-red-200">
-                <div class="flex items-center">
-                  <Icon name="heroicons:exclamation-circle" class="h-5 w-5 text-red-500 flex-shrink-0" />
-                  <p class="ml-3 text-sm text-red-700">{{ errorMessage }}</p>
-                </div>
-              </div>
-            </transition>
 
             <!-- Submit Button -->
             <button
@@ -205,12 +193,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
+import { useNotificationStore } from '~/stores/notification';
 
 definePageMeta({
   layout: 'auth',
 });
 
 const authStore = useAuthStore();
+const notificationStore = useNotificationStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -218,34 +208,30 @@ const email = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const isLoading = ref(false);
-const errorMessage = ref<string | null>(null);
-const showForm = ref(true); // Default to true so form is always shown
+const showForm = ref(false);
 const headerSection = ref<HTMLElement | null>(null);
 const formSection = ref<HTMLElement | null>(null);
 
 const justRegistered = computed(() => route.query.registered === 'true');
+const fromRegister = computed(() => route.query.from === 'register');
 
-// Always show form on mount
+// Show form immediately if coming from register page
 onMounted(() => {
-  showForm.value = true;
-  nextTick(() => {
-    if (formSection.value) {
-      setTimeout(() => {
-        if (formSection.value) {
+  if (fromRegister.value || justRegistered.value) {
+    showForm.value = true;
+    nextTick(() => {
+      if (formSection.value) {
+        setTimeout(() => {
           if (formSection.value) {
-            if (formSection.value) {
-              if (formSection.value) {
-                formSection.value.scrollIntoView({ 
-                  behavior: 'smooth', 
-                  block: 'center' 
-                });
-              }
-            }
+            formSection.value.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center' 
+            });
           }
-        }
-      }, 100);
-    }
-  });
+        }, 100);
+      }
+    });
+  }
 });
 
 const toggleForm = async () => {
@@ -281,7 +267,6 @@ const hideForm = () => {
 
 async function handleLogin() {
   isLoading.value = true;
-  errorMessage.value = null;
 
   try {
     await authStore.login({
@@ -291,7 +276,11 @@ async function handleLogin() {
     
     router.push('/');
   } catch (error: any) {
-    errorMessage.value = error.data?.error || 'Invalid credentials. Please try again.';
+    notificationStore.error(
+      'Login Failed',
+      error.data?.error || 'Invalid credentials. Please try again.',
+      5000
+    );
   } finally {
     isLoading.value = false;
   }

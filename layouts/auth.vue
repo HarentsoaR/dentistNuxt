@@ -1,5 +1,17 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50 flex flex-col relative overflow-hidden">
+    <!-- Page Transition Overlay -->
+    <Transition
+      enter-active-class="transition-all duration-1000 ease-in-out"
+      enter-from-class="opacity-0 scale-110"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition-all duration-1000 ease-in-out"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-90"
+    >
+      <div class="absolute inset-0 bg-gradient-to-br from-teal-50 via-white to-cyan-50 z-0"></div>
+    </Transition>
+
     <!-- Background decoration -->
     <div class="absolute inset-0 overflow-hidden">
       <div class="absolute -top-40 -right-40 w-80 h-80 bg-teal-200/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
@@ -9,15 +21,27 @@
 
     <!-- Main content area - centered with dynamic width -->
     <div class="flex-1 flex items-center justify-center px-4 py-12">
-      <div class="relative w-full mx-auto" :class="getContainerClass()">
-        <slot />
-      </div>
+      <Transition
+        enter-active-class="transition-all duration-1000 ease-out"
+        enter-from-class="opacity-0 transform translate-y-8 scale-95"
+        enter-to-class="opacity-100 transform translate-y-0 scale-100"
+        leave-active-class="transition-all duration-500 ease-in"
+        leave-from-class="opacity-100 transform translate-y-0 scale-100"
+        leave-to-class="opacity-0 transform -translate-y-8 scale-95"
+      >
+        <div class="relative w-full mx-auto z-10" :class="getContainerClass()">
+          <slot />
+        </div>
+      </Transition>
     </div>
 
     <!-- Footer - always at bottom -->
-    <footer class="relative text-center py-6 text-sm text-gray-500">
+    <footer class="relative text-center py-6 text-sm text-gray-500 z-10">
       <p>&copy; 2024 DentaCare Pro. All rights reserved.</p>
     </footer>
+
+    <!-- Notifications -->
+    <NotificationToast />
   </div>
 </template>
 
@@ -25,12 +49,26 @@
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { provide } from 'vue'
 import { useRoute } from 'vue-router'
+import { useNotificationStore } from '~/stores/notification'
+import NotificationToast from '~/components/NotificationToast.vue'
 
 const route = useRoute()
+const notificationStore = useNotificationStore()
 const showForm = ref(false)
 const headerSection = ref(null)
 const formSection = ref(null)
 let isScrolling = false
+
+// Show welcome notification when coming from logout
+onMounted(() => {
+  if (route.query.from === 'logout') {
+    notificationStore.success(
+      'Déconnexion réussie',
+      'Vous avez été déconnecté avec succès. Veuillez vous reconnecter pour continuer.',
+      5000
+    )
+  }
+})
 
 // Provide the toggle function to child components
 const toggleForm = async () => {

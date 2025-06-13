@@ -1,5 +1,47 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
+    <!-- Logout Confirmation Dialog -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition-all duration-500 ease-out"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-active-class="transition-all duration-500 ease-in"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+      >
+        <div
+          v-if="showLogoutConfirm"
+          class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center"
+          @click.self="showLogoutConfirm = false"
+        >
+          <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 transform">
+            <div class="text-center">
+              <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <Icon name="heroicons:arrow-right-on-rectangle" class="h-6 w-6 text-red-600" />
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Confirm Logout</h3>
+              <p class="text-sm text-gray-500 mb-6">Are you sure you want to log out? You'll need to sign in again to access your account.</p>
+              <div class="flex gap-3 justify-center">
+                <button
+                  @click="showLogoutConfirm = false"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  @click="confirmLogout"
+                  class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <!-- Mobile Menu Overlay -->
     <Transition
       enter-active-class="transition-opacity duration-300"
@@ -412,22 +454,31 @@
       </main>
       <Chatbot />
     </div>
+
+    <!-- Notifications -->
+    <NotificationToast />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useAuthStore } from '~/stores/auth'
-import { useRoute, navigateTo } from '#app'
+import { useRoute, navigateTo, useRouter } from '#app'
 import Chatbot from '~/components/ChatBot.vue'
+import NotificationToast from '~/components/NotificationToast.vue'
+import { useNotificationStore } from '~/stores/notification'
 
 const authStore = useAuthStore()
 const route = useRoute()
+const router = useRouter()
+const notificationStore = useNotificationStore()
 
 // Sidebar state
 const sidebarOpen = ref(false)
 const sidebarCollapsed = ref(false)
 const isMobile = ref(false)
+const showLogoutConfirm = ref(false)
+const isLoggingOut = ref(false)
 
 // User methods
 const getUserInitials = () => {
@@ -439,8 +490,38 @@ const getUserInitials = () => {
 }
 
 const handleLogout = () => {
-  authStore.logout()
-  navigateTo('/auth/login')
+  showLogoutConfirm.value = true
+}
+
+const confirmLogout = async () => {
+  try {
+    isLoggingOut.value = true
+    showLogoutConfirm.value = false
+    
+    // Add a delay to show the transition
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    // Perform logout
+    await authStore.logout()
+    
+    // Add another delay before navigation
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    // Navigate to login page with transition parameter
+    await router.push({
+      path: '/auth/login',
+      query: { from: 'logout' }
+    })
+  } catch (error) {
+    console.error('Logout error:', error)
+    notificationStore.error(
+      'Logout Failed',
+      'There was an error logging out. Please try again.',
+      5000
+    )
+  } finally {
+    isLoggingOut.value = false
+  }
 }
 
 // Sidebar methods
