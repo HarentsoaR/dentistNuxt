@@ -1,5 +1,9 @@
 // stores/auth.ts
 import { defineStore } from 'pinia';
+import { useChatStore } from '~/stores/chat';
+
+
+
 
 // Define the User structure based on your Go model
 interface User {
@@ -38,8 +42,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logout() {
+    const chatStore = useChatStore();
     token.value = null;
     user.value = null;
+    chatStore.clearChat
     // Redirect to login page to ensure clean state
     navigateTo('/auth/login');
   }

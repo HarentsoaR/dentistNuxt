@@ -380,7 +380,7 @@
               </button>
 
               <!-- User Avatar (Desktop) -->
-              <div class="hidden lg:flex items-center gap-3">
+              <!-- <div class="hidden lg:flex items-center gap-3">
                 <div class="text-right">
                   <p class="text-sm font-semibold text-gray-900">{{ authStore.user?.fullName }}</p>
                   <p class="text-xs text-gray-500 capitalize">{{ authStore.user?.role || 'User' }}</p>
@@ -388,7 +388,7 @@
                 <div class="w-10 h-10 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                   {{ getUserInitials() }}
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -410,6 +410,7 @@
           </div>
         </Transition>
       </main>
+      <Chatbot />
     </div>
   </div>
 </template>
@@ -418,6 +419,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { useRoute, navigateTo } from '#app'
+import Chatbot from '~/components/ChatBot.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
