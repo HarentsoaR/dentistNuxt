@@ -10,13 +10,13 @@
         Let's get you back on track to managing your dental care.
       </p>
       <div class="space-y-4">
-        <NuxtLink 
-          to="/" 
+        <button 
+          @click="handleDashboardClick"
           class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
         >
           <Icon name="heroicons:home" class="h-5 w-5 mr-2" />
           Return to Dashboard
-        </NuxtLink>
+        </button>
         <div class="text-sm text-gray-500">
           Need help? <NuxtLink to="/contact" class="text-teal-600 hover:text-teal-500">Contact Support</NuxtLink>
         </div>
@@ -26,7 +26,18 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '~/stores/auth'
+
 definePageMeta({
   layout: 'auth'
 })
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+async function handleDashboardClick() {
+  // Ensure user data is loaded before navigation
+  await authStore.initializeAuth()
+  router.push('/')
+}
 </script>
