@@ -178,7 +178,7 @@ async function handleBooking() {
   const endTime = new Date(startTime.getTime() + durationMinutes * 60 * 1000);
 
   try {
-    await $fetch('http://localhost:8080/api/appointments', {
+    await $fetch('https://dentistapi-production-92f7.up.railway.app/api/appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

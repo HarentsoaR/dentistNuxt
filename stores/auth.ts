@@ -25,14 +25,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   // ACTIONS
   async function register(payload: any) {
-    await $fetch('http://localhost:8080/auth/register', {
+    await $fetch('https://dentistapi-production-92f7.up.railway.app/auth/register', {
       method: 'POST',
       body: payload
     });
   }
 
   async function login(payload: any) {
-    const response: any = await $fetch('http://localhost:8080/auth/login', {
+    const response: any = await $fetch('https://dentistapi-production-92f7.up.railway.app/auth/login', {
       method: 'POST',
       body: payload
     });
@@ -56,7 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (token.value && !user.value) {
       try {
         // Fetch the user data using the existing token
-        const userData = await $fetch<User>('http://localhost:8080/api/user/me', {
+        const userData = await $fetch<User>('https://dentistapi-production-92f7.up.railway.app/api/user/me', {
           headers: {
             Authorization: `Bearer ${token.value}`
           }

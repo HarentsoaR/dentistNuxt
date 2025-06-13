@@ -11,7 +11,7 @@ const isLoading = ref(false);
 const searchQuery = ref('');
 
 // Fetch appointments from API
-const { data: appointments, pending, error, refresh } = await useFetch('http://localhost:8080/api/appointments', {
+const { data: appointments, pending, error, refresh } = await useFetch('https://dentistapi-production-92f7.up.railway.app/api/appointments', {
   headers: {
     Authorization: `Bearer ${authStore.token}`
   }
@@ -137,7 +137,7 @@ async function cancelAppointment() {
   
   isLoading.value = true;
   try {
-    await $fetch(`http://localhost:8080/api/appointments/${appointmentToCancel.value.id}`, {
+    await $fetch(`https://dentistapi-production-92f7.up.railway.app/api/appointments/${appointmentToCancel.value.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authStore.token}`

@@ -14,5 +14,10 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Modern Dental Appointment System' }
       ]
     }
+  },
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.NUXT_PUBLIC_API_BASE
+    }
   }
 })

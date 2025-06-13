@@ -52,7 +52,7 @@ export const useChatStore = defineStore('chat', () => {
       // Call your Go backend API
       const response = await $fetch<{ message: string; success: boolean }>('/api/chat', {
         method: 'POST',
-        baseURL: 'http://localhost:8080',
+        baseURL: 'https://dentistapi-production-92f7.up.railway.app',
         body: {
           message: userMessage,
         },
