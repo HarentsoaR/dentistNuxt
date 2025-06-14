@@ -159,8 +159,8 @@
                    :class="[$route.path === '/' ? 'opacity-100 scale-100' : '', sidebarCollapsed && !isMobile ? 'right-1' : '']"></div>
             </NuxtLink>
 
-            <!-- Appointments -->
-            <div class="space-y-1">
+            <!-- Appointments (Only for clients) -->
+            <div v-if="authStore.user?.role === 'client'" class="space-y-1">
               <NuxtLink
                 to="/appointments/my"
                 @click="closeMobileSidebar"
@@ -221,8 +221,9 @@
               </Transition>
             </div>
 
-            <!-- Calendar -->
+            <!-- Calendar (For dentists and staff) -->
             <NuxtLink
+              v-if="authStore.user?.role === 'dentist' || authStore.user?.role === 'staff'"
               to="/calendar"
               @click="closeMobileSidebar"
               class="flex items-center rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-teal-700 transition-all duration-200 relative overflow-hidden group"
@@ -250,7 +251,7 @@
                    :class="[$route.path === '/calendar' ? 'opacity-100 scale-100' : '', sidebarCollapsed && !isMobile ? 'right-1' : '']"></div>
             </NuxtLink>
 
-            <!-- Patients (for staff) -->
+            <!-- Patients (For dentists and staff) -->
             <NuxtLink
               v-if="authStore.user?.role === 'dentist' || authStore.user?.role === 'staff'"
               to="/patients"
@@ -280,7 +281,7 @@
                    :class="[$route.path === '/patients' ? 'opacity-100 scale-100' : '', sidebarCollapsed && !isMobile ? 'right-1' : '']"></div>
             </NuxtLink>
 
-            <!-- Reports (for staff) -->
+            <!-- Reports (For dentists and staff) -->
             <NuxtLink
               v-if="authStore.user?.role === 'dentist' || authStore.user?.role === 'staff'"
               to="/reports"

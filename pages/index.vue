@@ -18,7 +18,7 @@ const errorAppointments = ref<string | null>(null);
 onMounted(async () => {
   if (authStore.token) {
     try {
-      const data = await $fetch<any[]>('https://dentistapi-production-92f7.up.railway.app/api/appointments', {
+      const data = await $fetch<any[]>(`https://dentistapi-production-92f7.up.railway.app/api/appointment/user/${authStore.user?.id}`, {
         headers: {
           Authorization: `Bearer ${authStore.token}`
         }

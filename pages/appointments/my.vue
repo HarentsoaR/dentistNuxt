@@ -1,17 +1,37 @@
 <!-- pages/appointments/my.vue -->
 <script setup lang="ts">
+interface Appointment {
+  id: string;
+  service: string;
+  startTime: string;
+  endTime: string;
+  status: 'Confirmed' | 'Pending' | 'Cancelled' | 'Completed';
+  startDate: Date;
+  endDate: Date;
+  isUpcoming: boolean;
+  isPast: boolean;
+}
+
 const authStore = useAuthStore();
 const router = useRouter();
 
 // Reactive states
 const selectedTab = ref('upcoming');
 const showCancelModal = ref(false);
-const appointmentToCancel = ref(null);
+const showRescheduleModal = ref(false);
+const appointmentToCancel = ref<Appointment | null>(null);
+const appointmentToReschedule = ref<Appointment | null>(null);
 const isLoading = ref(false);
 const searchQuery = ref('');
 
+// Add reschedule form data
+const rescheduleForm = ref({
+  startTime: '',
+  endTime: ''
+});
+
 // Fetch appointments from API
-const { data: appointments, pending, error, refresh } = await useFetch('https://dentistapi-production-92f7.up.railway.app/api/appointments', {
+const { data: appointments, pending, error, refresh } = await useFetch(`https://dentistapi-production-92f7.up.railway.app/api/appointment/user/${authStore.user?.id}`, {
   headers: {
     Authorization: `Bearer ${authStore.token}`
   }
@@ -71,7 +91,7 @@ const nextAppointment = computed(() => {
 });
 
 // Utility functions
-function formatDate(date) {
+function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', { 
     weekday: 'long', 
     year: 'numeric', 
@@ -80,7 +100,7 @@ function formatDate(date) {
   });
 }
 
-function formatTime(date) {
+function formatTime(date: Date): string {
   return date.toLocaleTimeString('en-US', { 
     hour: 'numeric', 
     minute: '2-digit', 
@@ -88,7 +108,7 @@ function formatTime(date) {
   });
 }
 
-function getStatusColor(status) {
+function getStatusColor(status: Appointment['status']): string {
   const colors = {
     'Confirmed': 'bg-green-100 text-green-800 border-green-200',
     'Pending': 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -98,8 +118,8 @@ function getStatusColor(status) {
   return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
 }
 
-function getServiceIcon(service) {
-  const icons = {
+function getServiceIcon(service: string): string {
+  const icons: Record<string, string> = {
     'Annual Check-up and Cleaning': '🦷',
     'Teeth Whitening': '✨',
     'Cavity Filling': '🔧',
@@ -110,9 +130,9 @@ function getServiceIcon(service) {
   return icons[service] || '🦷';
 }
 
-function getDaysUntil(date) {
+function getDaysUntil(date: Date): string {
   const today = new Date();
-  const diffTime = date - today;
+  const diffTime = date.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   
   if (diffDays === 0) return 'Today';
@@ -122,7 +142,7 @@ function getDaysUntil(date) {
 }
 
 // Cancel appointment functionality
-function openCancelModal(appointment) {
+function openCancelModal(appointment: Appointment) {
   appointmentToCancel.value = appointment;
   showCancelModal.value = true;
 }
@@ -137,8 +157,8 @@ async function cancelAppointment() {
   
   isLoading.value = true;
   try {
-    await $fetch(`https://dentistapi-production-92f7.up.railway.app/api/appointments/${appointmentToCancel.value.id}`, {
-      method: 'DELETE',
+    await $fetch(`https://dentistapi-production-92f7.up.railway.app/api/appointments/${appointmentToCancel.value.id}/cancel`, {
+      method: 'PATCH',
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
@@ -148,6 +168,56 @@ async function cancelAppointment() {
     closeCancelModal();
   } catch (error) {
     console.error('Failed to cancel appointment:', error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+// Reschedule appointment functionality
+function openRescheduleModal(appointment: Appointment) {
+  appointmentToReschedule.value = appointment;
+  // Pre-fill the form with current appointment times
+  const startDate = new Date(appointment.startTime);
+  rescheduleForm.value = {
+    startTime: startDate.toISOString().split('T')[0],
+    endTime: startDate.toISOString().split('T')[1].slice(0, 5)
+  };
+  showRescheduleModal.value = true;
+}
+
+function closeRescheduleModal() {
+  showRescheduleModal.value = false;
+  appointmentToReschedule.value = null;
+  rescheduleForm.value = {
+    startTime: '',
+    endTime: ''
+  };
+}
+
+async function rescheduleAppointment() {
+  if (!appointmentToReschedule.value) return;
+  
+  isLoading.value = true;
+  try {
+    // Combine date and time into ISO string
+    const newStartTime = new Date(`${rescheduleForm.value.startTime}T${rescheduleForm.value.endTime}`);
+    const newEndTime = new Date(newStartTime.getTime() + 60 * 60 * 1000); // Add 1 hour for appointment duration
+    
+    await $fetch(`https://dentistapi-production-92f7.up.railway.app/api/appointments/${appointmentToReschedule.value.id}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      },
+      body: {
+        startTime: newStartTime.toISOString(),
+        endTime: newEndTime.toISOString()
+      }
+    });
+    
+    await refresh();
+    closeRescheduleModal();
+  } catch (error) {
+    console.error('Failed to reschedule appointment:', error);
   } finally {
     isLoading.value = false;
   }
@@ -368,7 +438,9 @@ async function cancelAppointment() {
                     class="flex-1 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                     Cancel
                   </button>
-                  <button class="flex-1 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                  <button 
+                    @click="openRescheduleModal(appointment)"
+                    class="flex-1 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
                     Reschedule
                   </button>
                 </div>
@@ -485,6 +557,74 @@ async function cancelAppointment() {
             </svg>
             <span v-if="isLoading">Cancelling...</span>
             <span v-else>Yes, Cancel</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reschedule Appointment Modal -->
+    <div v-if="showRescheduleModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+        <div class="text-center mb-6">
+          <div class="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Reschedule Appointment</h3>
+          <p class="text-gray-600">Please select a new time for your appointment.</p>
+        </div>
+        
+        <div v-if="appointmentToReschedule" class="bg-gray-50 rounded-lg p-4 mb-6">
+          <div class="flex items-center">
+            <div class="text-2xl mr-3">{{ getServiceIcon(appointmentToReschedule.service) }}</div>
+            <div>
+              <div class="font-semibold text-gray-900">{{ appointmentToReschedule.service }}</div>
+              <div class="text-sm text-gray-600">
+                {{ formatDate(appointmentToReschedule.startDate) }} at {{ formatTime(appointmentToReschedule.startDate) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Date and Time Selection -->
+        <div class="space-y-4 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">New Date</label>
+            <input 
+              type="date" 
+              v-model="rescheduleForm.startTime"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :min="new Date().toISOString().split('T')[0]"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">New Time</label>
+            <input 
+              type="time" 
+              v-model="rescheduleForm.endTime"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+          </div>
+        </div>
+        
+        <div class="flex gap-3">
+          <button 
+            @click="closeRescheduleModal"
+            :disabled="isLoading"
+            class="flex-1 px-4 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50">
+            Cancel
+          </button>
+          <button 
+            @click="rescheduleAppointment"
+            :disabled="isLoading"
+            class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center">
+            <svg v-if="isLoading" class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span v-if="isLoading">Rescheduling...</span>
+            <span v-else>Yes, Reschedule</span>
           </button>
         </div>
       </div>
