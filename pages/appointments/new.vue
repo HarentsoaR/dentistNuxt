@@ -1,6 +1,6 @@
 <!-- pages/appointments/new.vue -->
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router'; // Assuming useRouter is from vue-router for Nuxt 3 compatibility
 import { useAuthStore } from '~/stores/auth'; // Assuming your auth store is correctly path-aliased
 
@@ -92,12 +92,50 @@ const availableServices = [
 // Get today's date for min date validation
 const today = new Date().toISOString().split('T')[0];
 
-// Available time slots
+// Available time slots (from 08:00 to 17:30, every 30 min)
 const timeSlots = [
   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-  '11:00', '11:30', '13:00', '13:30', '14:00', '14:30',
-  '15:00', '15:30', '16:00', '16:30', '17:00'
+  '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
 ];
+
+// State for booked slots
+const bookedSlots = ref<string[]>([]);
+
+// Watch for date selection and fetch appointments for that date
+watch(appointmentDate, async (newDate) => {
+  bookedSlots.value = [];
+  appointmentTime.value = '';
+  if (!newDate) return;
+  try {
+    // Fetch all appointments for the selected date
+    const response = await $fetch('https://dentistapi-production-92f7.up.railway.app/api/appointments', {
+      headers: { 'Authorization': `Bearer ${authStore.token}` }
+    });
+    // Filter appointments for the selected date
+    const selectedDay = new Date(newDate);
+    const appointments = Array.isArray(response) ? response : [];
+    bookedSlots.value = appointments
+      .filter(appt => {
+        const apptDate = new Date(appt.startTime);
+        return apptDate.getFullYear() === selectedDay.getFullYear() &&
+               apptDate.getMonth() === selectedDay.getMonth() &&
+               apptDate.getDate() === selectedDay.getDate();
+      })
+      .map(appt => {
+        // Return the time in HH:mm format
+        const d = new Date(appt.startTime);
+        return d.toTimeString().slice(0,5);
+      });
+  } catch (e) {
+    bookedSlots.value = [];
+  }
+});
+
+// Helper to check if a slot is booked
+function isSlotBooked(time: string) {
+  return bookedSlots.value.includes(time);
+}
 
 // Computed property to get details of the selected service
 const selectedServiceDetails = computed(() => {
@@ -255,6 +293,40 @@ function formatTime(timeString: string): string {
     hour12: true
   });
 }
+
+// Calendar state for compact calendar
+const calendarMonth = ref(new Date().getMonth());
+const calendarYear = ref(new Date().getFullYear());
+
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+function getFirstDayOfWeek(year: number, month: number) {
+  return new Date(year, month, 1).getDay();
+}
+function selectCalendarDate(day: number) {
+  const m = (calendarMonth.value + 1).toString().padStart(2, '0');
+  const d = day.toString().padStart(2, '0');
+  appointmentDate.value = `${calendarYear.value}-${m}-${d}`;
+  clearErrors();
+}
+function prevMonth() {
+  if (calendarMonth.value === 0) {
+    calendarMonth.value = 11;
+    calendarYear.value--;
+  } else {
+    calendarMonth.value--;
+  }
+}
+function nextMonth() {
+  if (calendarMonth.value === 11) {
+    calendarMonth.value = 0;
+    calendarYear.value++;
+  } else {
+    calendarMonth.value++;
+  }
+}
+const todayDate = new Date();
 </script>
 
 <template>
@@ -382,18 +454,34 @@ function formatTime(timeString: string): string {
             </div>
 
             <div class="max-w-2xl mx-auto space-y-8">
-              <!-- Date Selection -->
-              <div class="space-y-4">
-                <label class="block text-lg font-semibold text-gray-900 text-center">Preferred Date</label>
-                <div class="relative max-w-sm mx-auto">
-                  <input type="date"
-                         v-model="appointmentDate"
-                         :min="today"
-                         @change="clearErrors"
-                         class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-center font-medium"
-                         :class="errors.date ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : ''">
+              <!-- Compact Calendar Date Selection -->
+              <div class="space-y-2">
+                <label class="block text-base font-semibold text-gray-900 text-center mb-1">Preferred Date</label>
+                <div class="flex flex-col items-center">
+                  <div class="flex items-center justify-between w-64 mb-1">
+                    <button @click="prevMonth" class="px-2 py-1 text-gray-500 hover:text-blue-600 text-xs">&#8592;</button>
+                    <span class="font-medium text-sm">{{ new Date(calendarYear, calendarMonth).toLocaleString('default', { month: 'long', year: 'numeric' }) }}</span>
+                    <button @click="nextMonth" class="px-2 py-1 text-gray-500 hover:text-blue-600 text-xs">&#8594;</button>
+                  </div>
+                  <div class="grid grid-cols-7 gap-1 w-64 text-xs">
+                    <span v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="text-gray-400 text-center">{{ d }}</span>
+                    <span v-for="n in getFirstDayOfWeek(calendarYear, calendarMonth)" :key="'empty'+n"></span>
+                    <button
+                      v-for="day in getDaysInMonth(calendarYear, calendarMonth)"
+                      :key="day"
+                      :class="[
+                        'rounded-full w-7 h-7 flex items-center justify-center',
+                        appointmentDate === `${calendarYear}-${(calendarMonth+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}` ? 'bg-blue-600 text-white' : 'hover:bg-blue-100',
+                        (new Date(calendarYear, calendarMonth, day) < todayDate) ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer'
+                      ]"
+                      :disabled="new Date(calendarYear, calendarMonth, day) < todayDate"
+                      @click="selectCalendarDate(day)"
+                    >
+                      {{ day }}
+                    </button>
+                  </div>
                 </div>
-                <p v-if="errors.date" class="text-sm text-red-600 text-center flex items-center justify-center">
+                <p v-if="errors.date" class="text-xs text-red-600 text-center flex items-center justify-center mt-1">
                   <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
@@ -401,24 +489,30 @@ function formatTime(timeString: string): string {
                 </p>
               </div>
 
-              <!-- Time Selection -->
-              <div class="space-y-4">
-                <label class="block text-lg font-semibold text-gray-900 text-center">Available Time Slots</label>
-                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 max-w-lg mx-auto">
+              <!-- Compact Time Selection -->
+              <div class="space-y-2">
+                <label class="block text-base font-semibold text-gray-900 text-center mb-1">Available Time Slots</label>
+                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 max-w-lg mx-auto">
                   <div v-for="time in timeSlots" :key="time" class="relative">
                     <input type="radio"
                            :id="`time-${time}`"
                            :value="time"
                            v-model="appointmentTime"
                            @change="clearErrors"
-                           class="sr-only peer">
+                           class="sr-only peer"
+                           :disabled="isSlotBooked(time)">
                     <label :for="`time-${time}`"
-                           class="block w-full py-2 px-1 text-center text-sm font-medium bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 peer-checked:bg-blue-500 peer-checked:border-blue-500 peer-checked:text-white transition-all duration-200">
+                           :class="[
+                             'block w-full py-1 px-1 text-center text-xs font-medium border-2 rounded-lg transition-all duration-200',
+                             isSlotBooked(time)
+                               ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed line-through'
+                               : 'bg-gray-50 border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 peer-checked:bg-blue-500 peer-checked:border-blue-500 peer-checked:text-white'
+                           ]">
                       {{ formatTime(time) }}
                     </label>
                   </div>
                 </div>
-                <p v-if="errors.time" class="text-sm text-red-600 text-center flex items-center justify-center">
+                <p v-if="errors.time" class="text-xs text-red-600 text-center flex items-center justify-center mt-1">
                   <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
