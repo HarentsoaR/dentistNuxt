@@ -132,6 +132,7 @@
           <div class="space-y-1">
             <!-- Dashboard -->
             <NuxtLink
+              v-if="authStore.user?.role === 'dentist'"
               to="/"
               @click="closeMobileSidebar"
               class="flex items-center rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-teal-700 transition-all duration-200 relative overflow-hidden group"
