@@ -6,17 +6,25 @@
       class="text-center mb-8 transition-all duration-700 ease-in-out"
       :class="showForm ? 'transform -translate-y-4 opacity-70 scale-95' : 'transform translate-y-0 opacity-100 scale-100'"
     >
-      <div class="flex justify-center mb-6">
-        <div class="relative">
-          <div class="absolute inset-0 bg-teal-200 rounded-full animate-ping opacity-75"></div>
-          <div class="relative bg-white p-4 rounded-full shadow-xl border border-teal-100">
-            <Icon name="twemoji:tooth" class="h-10 w-10" />
+      <transition name="pop-float" appear>
+        <div class="flex justify-center mb-6" key="logo">
+          <div class="relative flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full backdrop-blur-md bg-black/30 shadow-2xl z-0"></div>
+            <div class="relative z-10 animate-float">
+              <Icon name="twemoji:tooth" class="h-14 w-14 drop-shadow-lg" style="filter: drop-shadow(0 2px 12px #00dc82cc);" />
+            </div>
           </div>
         </div>
-      </div>
-      <h1 class="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-        DentaCare Pro
-      </h1>
+      </transition>
+      <transition name="fade-slide" appear>
+        <h1 
+          key="dentacarepro"
+          class="text-5xl font-extrabold mb-2 bg-gradient-to-r from-[#00dc82] via-[#38bdf8] to-[#0e1628] bg-clip-text text-transparent animate-shimmer"
+          style="text-shadow: 0 2px 16px #0e1628, 0 1px 0 #fff, 0 0 8px #38bdf8;"
+        >
+          DentaCare Pro
+        </h1>
+      </transition>
       <p class="text-gray-600 font-medium">
         Professional Dental Care Management
       </p>
@@ -26,7 +34,7 @@
     <div class="flex justify-center mb-8">
       <button
         @click="toggleForm"
-        class="group flex items-center justify-center w-14 h-14 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-teal-200"
+        class="group flex items-center justify-center w-14 h-14 bg-gradient-to-r from-[#00dc82] to-[#38bdf8] rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-[#38bdf8]"
         :class="showForm ? 'rotate-180' : 'rotate-0'"
       >
         <Icon 
@@ -48,7 +56,7 @@
       <div 
         v-if="showForm" 
         ref="formSection"
-        class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-white/20"
+        class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-[#38bdf8]/20"
       >
         <!-- Form Content -->
         <div class="space-y-6">
@@ -126,7 +134,7 @@
             <button
               :disabled="isLoading"
               type="submit"
-              class="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-base font-semibold rounded-xl text-white bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+              class="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-base font-semibold rounded-xl text-white bg-gradient-to-r from-[#00dc82] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#00dc82] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38bdf8] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
             >
               <span v-if="isLoading" class="flex items-center">
                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -156,7 +164,7 @@
             <!-- Google Auth Button -->
             <button 
               type="button" 
-              class="group w-full flex items-center justify-center px-4 py-3.5 border border-gray-200 rounded-xl text-base font-semibold text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow-md"
+              class="group w-full flex items-center justify-center px-4 py-3.5 border border-[#38bdf8]/30 rounded-xl text-base font-semibold text-[#0e1628] bg-white hover:bg-[#f0f9ff] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38bdf8] transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow-md"
             >
               <Icon name="flat-color-icons:google" class="h-5 w-5 mr-3" />
               <span>Continue with Google</span>
@@ -167,7 +175,7 @@
               Don't have an account?
               <NuxtLink 
                 to="/auth/register" 
-                class="font-semibold text-teal-600 hover:text-teal-500 transition-colors duration-200"
+                class="font-semibold text-[#00dc82] hover:text-[#38bdf8] transition-colors duration-200"
               >
                 Create one here
               </NuxtLink>
@@ -178,7 +186,7 @@
               <button
                 type="button"
                 @click="hideForm"
-                class="flex items-center text-sm text-gray-500 hover:text-teal-600 transition-colors duration-200"
+                class="flex items-center text-sm text-[#0e1628] hover:text-[#00dc82] transition-colors duration-200"
               >
                 <Icon name="heroicons:chevron-up" class="h-4 w-4 mr-1" />
                 Back to top
@@ -308,5 +316,49 @@ async function handleLogin() {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 2.5s linear infinite;
+}
+
+/* Pop-in and fade-slide transitions */
+.pop-float-enter-active {
+  animation: pop-in 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.7); }
+  80% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.fade-slide-enter-active {
+  transition: all 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.fade-slide-enter-to {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>
