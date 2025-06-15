@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
 import { format } from 'date-fns';
+import { useI18n } from 'vue-i18n';
 
 // Use the default layout for logged-in users and protect the route
 definePageMeta({
   layout: 'default'
 });
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -62,8 +64,8 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
   <div class="space-y-8 animate-fade-in">
     <!-- Welcome Section -->
     <div class="text-center mb-8">
-      <h2 class="text-4xl font-bold text-gray-900 mb-2">Welcome to Your Dashboard</h2>
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Manage your dental care appointments and access all the tools you need for a healthy smile.</p>
+      <h2 class="text-4xl font-bold text-gray-900 mb-2">{{ t('page.index.mainTitle') }}</h2>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ t('page.index.mainSubtitle') }}</p>
     </div>
 
     <!-- Background decorations -->
@@ -77,7 +79,7 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
       <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-600">Total Appointments</p>
+            <p class="text-sm font-medium text-gray-600">{{ t('dashboard.stats.total') }}</p>
             <p class="text-3xl font-bold text-gray-900">{{ totalAppointments }}</p>
           </div>
           <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -89,7 +91,7 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
       <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-600">Upcoming</p>
+            <p class="text-sm font-medium text-gray-600">{{ t('dashboard.stats.upcoming') }}</p>
             <p class="text-3xl font-bold text-gray-900">{{ upcomingAppointments.length }}</p>
           </div>
           <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -101,7 +103,7 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
       <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-600">This Month</p>
+            <p class="text-sm font-medium text-gray-600">{{ t('page.index.stats.thisMonth') }}</p>
             <p class="text-3xl font-bold text-gray-900">{{ thisMonthAppointmentsCount }}</p>
           </div>
           <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
@@ -126,8 +128,8 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
                 <Icon name="heroicons:user-group" class="h-8 w-8 text-white" />
               </div>
               <div>
-                <h3 class="text-2xl font-bold text-gray-900">Staff Dashboard</h3>
-                <p class="text-gray-600">Manage all patient appointments and schedules</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ t('page.index.staffDashboard.title') }}</h3>
+                <p class="text-gray-600">{{ t('page.index.staffDashboard.subtitle') }}</p>
               </div>
             </div>
             
@@ -140,8 +142,8 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
                   <Icon name="heroicons:clipboard-document-list" class="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900 group-hover:text-emerald-700">View All Appointments</h4>
-                  <p class="text-sm text-gray-600">Manage patient schedules</p>
+                  <h4 class="font-semibold text-gray-900 group-hover:text-emerald-700">{{ t('page.index.staffDashboard.viewAllAppointments') }}</h4>
+                  <p class="text-sm text-gray-600">{{ t('page.index.staffDashboard.managePatientSchedules') }}</p>
                 </div>
                 <Icon name="heroicons:arrow-right" class="h-5 w-5 text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all duration-200 ml-auto" />
               </NuxtLink>
@@ -151,8 +153,8 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
                   <Icon name="heroicons:chart-pie" class="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900 group-hover:text-blue-700">Analytics</h4>
-                  <p class="text-sm text-gray-600">View reports & insights</p>
+                  <h4 class="font-semibold text-gray-900 group-hover:text-blue-700">{{ t('page.index.staffDashboard.analytics') }}</h4>
+                  <p class="text-sm text-gray-600">{{ t('page.index.staffDashboard.viewReportsInsights') }}</p>
                 </div>
                 <Icon name="heroicons:arrow-right" class="h-5 w-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 ml-auto" />
               </div>
@@ -168,8 +170,8 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
                 <Icon name="heroicons:calendar-days" class="h-8 w-8 text-white" />
               </div>
               <div>
-                <h3 class="text-2xl font-bold text-gray-900">Your Appointments</h3>
-                <p class="text-gray-600">Manage your dental care schedule</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ t('page.index.clientDashboard.title') }}</h3>
+                <p class="text-gray-600">{{ t('page.index.clientDashboard.subtitle') }}</p>
               </div>
             </div>
             
@@ -182,8 +184,8 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
                   <Icon name="heroicons:eye" class="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900 group-hover:text-gray-700">View My Appointments</h4>
-                  <p class="text-sm text-gray-600">See your schedule</p>
+                  <h4 class="font-semibold text-gray-900 group-hover:text-gray-700">{{ t('page.index.clientDashboard.viewMyAppointments') }}</h4>
+                  <p class="text-sm text-gray-600">{{ t('page.index.clientDashboard.seeYourSchedule') }}</p>
                 </div>
                 <Icon name="heroicons:arrow-right" class="h-5 w-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200 ml-auto" />
               </NuxtLink>
@@ -196,8 +198,8 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
                   <Icon name="heroicons:plus" class="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900 group-hover:text-blue-700">Book New Appointment</h4>
-                  <p class="text-sm text-gray-600">Schedule your visit</p>
+                  <h4 class="font-semibold text-gray-900 group-hover:text-blue-700">{{ t('page.index.clientDashboard.bookNewAppointmentLink') }}</h4>
+                  <p class="text-sm text-gray-600">{{ t('page.index.clientDashboard.scheduleYourVisit') }}</p>
                 </div>
                 <Icon name="heroicons:arrow-right" class="h-5 w-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 ml-auto" />
               </NuxtLink>
@@ -215,31 +217,31 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
             <Icon name="heroicons:clock" class="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 class="text-xl font-bold text-gray-900">Upcoming Appointments</h3>
-            <p class="text-sm text-gray-600">Your next scheduled visits</p>
+            <h3 class="text-xl font-bold text-gray-900">{{ t('page.index.upcomingAppointments.title') }}</h3>
+            <p class="text-sm text-gray-600">{{ t('page.index.upcomingAppointments.subtitle') }}</p>
           </div>
         </div>
         <NuxtLink to="/appointments/my" class="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-1 transition-colors duration-200">
-          View All
+          {{ t('common.viewAll') }}
           <Icon name="heroicons:arrow-right" class="h-4 w-4" />
         </NuxtLink>
       </div>
       
       <div class="space-y-4">
-        <div v-if="loadingAppointments" class="text-center py-8 text-gray-500">Loading upcoming appointments...</div>
-        <div v-else-if="errorAppointments" class="text-center text-red-500 py-8">Failed to load appointments: {{ errorAppointments }}</div>
+        <div v-if="loadingAppointments" class="text-center py-8 text-gray-500">{{ t('page.index.upcomingAppointments.loading') }}</div>
+        <div v-else-if="errorAppointments" class="text-center text-red-500 py-8">{{ t('page.index.upcomingAppointments.loadFailedPrefix') }} {{ errorAppointments }}</div>
         <div v-else-if="upcomingAppointments.length === 0" class="text-center py-12 text-gray-600">
           <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="heroicons:calendar-days" class="h-8 w-8 text-gray-400" />
           </div>
-          <h4 class="text-lg font-medium text-gray-900 mb-2">No upcoming appointments</h4>
-          <p class="text-gray-600 mb-4">You don't have any appointments scheduled yet.</p>
+          <h4 class="text-lg font-medium text-gray-900 mb-2">{{ t('page.index.upcomingAppointments.emptyTitle') }}</h4>
+          <p class="text-gray-600 mb-4">{{ t('page.index.upcomingAppointments.emptyMessage') }}</p>
           <NuxtLink 
             to="/appointments/new" 
             class="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors duration-200"
           >
             <Icon name="heroicons:plus" class="h-4 w-4" />
-            Book Appointment
+            {{ t('page.index.upcomingAppointments.bookButton') }}
           </NuxtLink>
         </div>
         <div v-else>
@@ -247,13 +249,13 @@ const formatTime = (dateString: string) => format(new Date(dateString), 'p');
             class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm flex justify-between items-center hover:shadow-md transition">
             <div>
               <p class="font-semibold text-gray-900">{{ formatDate(appointment.startTime) }} at {{ formatTime(appointment.startTime) }}</p>
-              <p class="text-sm text-gray-600">Service: {{ appointment.service }}</p>
+              <p class="text-sm text-gray-600">{{ t('common.servicePrefix') }}: {{ appointment.service }}</p>
             </div>
             <div :class="{
                 'text-blue-600': appointment.status === 'Scheduled', 
                 'text-green-600': appointment.status === 'Completed',
                 'text-red-600': appointment.status === 'Cancelled'
-              }" class="text-sm font-medium">{{ appointment.status }}</div>
+              }" class="text-sm font-medium">{{ t('appointments.status.' + appointment.status.toLowerCase()) }}</div>
           </div>
         </div>
       </div>

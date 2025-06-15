@@ -82,7 +82,7 @@
               :class="hasMinLength ? 'text-emerald-500' : 'text-gray-400'"
             />
             <span :class="hasMinLength ? 'text-emerald-700' : 'text-gray-500'">
-              At least 8 characters
+              {{ t('component.passwordInput.requirements.minLength') }}
             </span>
           </div>
           
@@ -93,7 +93,7 @@
               :class="hasNumber ? 'text-emerald-500' : 'text-gray-400'"
             />
             <span :class="hasNumber ? 'text-emerald-700' : 'text-gray-500'">
-              Contains a number
+              {{ t('component.passwordInput.requirements.number') }}
             </span>
           </div>
           
@@ -104,7 +104,7 @@
               :class="hasSymbol ? 'text-emerald-500' : 'text-gray-400'"
             />
             <span :class="hasSymbol ? 'text-emerald-700' : 'text-gray-500'">
-              Contains a symbol
+              {{ t('component.passwordInput.requirements.symbol') }}
             </span>
           </div>
           
@@ -115,7 +115,7 @@
               :class="hasUppercase ? 'text-emerald-500' : 'text-gray-400'"
             />
             <span :class="hasUppercase ? 'text-emerald-700' : 'text-gray-500'">
-              Contains uppercase letter
+              {{ t('component.passwordInput.requirements.uppercase') }}
             </span>
           </div>
         </div>
@@ -136,7 +136,7 @@
             :class="passwordsMatch ? 'text-emerald-500' : 'text-red-500'"
           />
           <span :class="passwordsMatch ? 'text-emerald-700' : 'text-red-600'">
-            {{ passwordsMatch ? 'Passwords match' : 'Passwords do not match' }}
+            {{ passwordsMatch ? t('component.passwordInput.match.passwordsMatch') : t('component.passwordInput.match.passwordsDoNotMatch') }}
           </span>
         </div>
       </div>
@@ -159,6 +159,7 @@
 <script setup lang="ts">
 import { useField, useFormValues } from 'vee-validate';
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   name: { type: String, required: true },
@@ -167,6 +168,8 @@ const props = defineProps({
   icon: { type: String, default: '' },
   confirmField: { type: String, default: '' },
 });
+
+const { t } = useI18n();
 
 const showPassword = ref(false);
 const isTouched = ref(false);
@@ -242,15 +245,15 @@ const getStrengthTextColor = () => {
 const getStrengthText = () => {
   switch (passwordStrength.value) {
     case 1:
-      return 'Weak password';
+      return t('component.passwordInput.strength.weak');
     case 2:
-      return 'Fair password';
+      return t('component.passwordInput.strength.fair');
     case 3:
-      return 'Good password';
+      return t('component.passwordInput.strength.good');
     case 4:
-      return 'Strong password';
+      return t('component.passwordInput.strength.strong');
     default:
-      return 'Enter a password';
+      return t('component.passwordInput.strength.default');
   }
 };
 </script>

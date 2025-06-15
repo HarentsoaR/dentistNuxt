@@ -1,6 +1,7 @@
 <!-- components/AppointmentCard.vue -->
 <script setup lang="ts">
 import { format } from 'date-fns';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   appointment: {
@@ -8,6 +9,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const { t } = useI18n();
 
 // Helper to format dates nicely, e.g., "May 25, 2024"
 const formattedDate = computed(() => {
@@ -59,10 +62,10 @@ const statusIcon = computed(() => {
           :class="statusClasses"
         >
           <Icon :name="statusIcon" class="h-4 w-4" />
-          {{ appointment.status }}
+          {{ t('appointments.status.' + appointment.status.toLowerCase()) }}
         </span>
       </div>
-      <p class="mt-1 text-sm text-gray-500">with Dr. Smiles</p>
+      <p class="mt-1 text-sm text-gray-500">{{ t('component.appointmentCard.withDoctor', { doctorName: 'Smiles' }) }}</p>
     </div>
     <div class="border-t border-gray-200 bg-gray-50 px-5 py-3">
       <div class="flex items-center justify-between text-sm text-gray-600">
