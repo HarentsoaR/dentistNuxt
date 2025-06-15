@@ -22,6 +22,6 @@ export default defineNuxtConfig({
   },
   // Register global middleware
   routeRules: {
-    '/': { middleware: ['auth'] }
-  }
+        // '/': { middleware: ['auth'] }
+      }
 })
