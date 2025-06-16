@@ -1,5 +1,8 @@
 // nuxt.config.ts
 export default defineNuxtConfig({
+  nitro: {
+    preset: 'netlify'
+  },
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
