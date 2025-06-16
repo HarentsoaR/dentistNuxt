@@ -11,7 +11,7 @@
           <div class="relative flex items-center justify-center">
             <div class="absolute inset-0 rounded-full backdrop-blur-md bg-black/30 shadow-2xl z-0"></div>
             <div class="relative z-10 animate-float">
-              <Icon name="twemoji:tooth" class="h-14 w-14 drop-shadow-lg" style="filter: drop-shadow(0 2px 12px #00dc82cc);" />
+              <Icon name="twemoji:tooth" class="logo-big drop-shadow-lg" style="filter: drop-shadow(0 2px 12px #00dc82cc);" />
             </div>
           </div>
         </div>
@@ -19,12 +19,15 @@
       <transition name="pop-in" appear>
         <h1
           key="dentacarepro"
-          class="stunning-title mb-2"
+          class="text-4xl font-semibold mb-2 bg-gradient-to-r from-[#00dc82] via-[#38bdf8] to-[#0e1628] bg-clip-text text-transparent animate-shimmer"
+          style="text-shadow: 0 2px 16px #0e1628, 0 1px 0 #fff, 0 0 8px #38bdf8;"
         >
-          DentaCare Pro
+          <span class="inline-block animate-slide-up" style="animation-delay: 0.1s">Denta</span>
+          <span class="inline-block animate-slide-up" style="animation-delay: 0.2s">Care</span>
+          <span class="inline-block animate-slide-up" style="animation-delay: 0.3s">Pro</span>
         </h1>
       </transition>
-      <p class="text-gray-600 font-medium">
+      <p class="text-gray-600 font-medium text-lg">
         Professional Dental Care Management
       </p>
     </div>
@@ -316,39 +319,62 @@ const onSubmit = handleSubmit(async (values) => {
   }
 }
 
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
 @keyframes shimmer {
   0% { background-position: -400px 0; }
   100% { background-position: 400px 0; }
 }
 
-.stunning-title {
-  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
-  font-size: 2.8rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  background: linear-gradient(90deg, #00dc82, #38bdf8, #0e1628, #38bdf8, #00dc82);
+.animate-shimmer {
   background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
   animation: shimmer 2.5s linear infinite;
-  text-shadow:
-    0 2px 24px #00dc82cc,
-    0 1px 0 #fff,
-    0 0 8px #38bdf8,
-    0 0 2px #0e1628;
-  transition: text-shadow 0.3s;
 }
 
-/* Pop-in animation for text */
-.pop-in-enter-active {
-  animation: pop-in-text 0.7s cubic-bezier(0.4,0,0.2,1);
+/* Platform-specific adjustments */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  .text-4xl {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+  
+  .h-12 {
+    height: 3rem;
+  }
+  
+  .w-12 {
+    width: 3rem;
+  }
 }
 
-@keyframes pop-in-text {
-  0% { opacity: 0; transform: scale(0.7); }
-  80% { opacity: 1; transform: scale(1.1); }
-  100% { opacity: 1; transform: scale(1); }
+.logo-big {
+  width: 5em;
+  height: 5em;
+  max-width: 100px;
+  max-height: 100px;
+  margin-bottom: 0.5em;
 }
 </style>

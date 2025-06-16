@@ -450,7 +450,47 @@
           mode="out-in"
         >
           <div class="p-4 sm:p-6 lg:p-8">
-            <slot />
+            <div v-if="contentLoading">
+              <PageSkeleton>
+                <!-- Page Header -->
+                <div class="mb-8">
+                  <div class="skeleton skeleton-text w-64 h-8 mb-2"></div>
+                  <div class="skeleton skeleton-text w-96 h-4"></div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- Left Column -->
+                  <div class="md:col-span-2 space-y-6">
+                    <div class="skeleton-card">
+                      <div class="space-y-4">
+                        <div class="skeleton skeleton-text w-3/4"></div>
+                        <div class="skeleton skeleton-text w-1/2"></div>
+                        <div class="skeleton skeleton-text w-2/3"></div>
+                      </div>
+                    </div>
+                    <div class="skeleton-card">
+                      <div class="space-y-4">
+                        <div class="skeleton skeleton-text w-3/4"></div>
+                        <div class="skeleton skeleton-text w-1/2"></div>
+                        <div class="skeleton skeleton-text w-2/3"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Right Column -->
+                  <div class="space-y-6">
+                    <div class="skeleton-card">
+                      <div class="space-y-4">
+                        <div class="skeleton skeleton-text w-1/2"></div>
+                        <div class="skeleton skeleton-text w-3/4"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </PageSkeleton>
+            </div>
+            <slot v-else />
           </div>
         </Transition>
       </main>
@@ -469,6 +509,8 @@ import { useRoute, navigateTo, useRouter } from '#app'
 import Chatbot from '~/components/ChatBot.vue'
 import NotificationToast from '~/components/NotificationToast.vue'
 import { useNotificationStore } from '~/stores/notification'
+import ContentLoader from '~/components/loader/ContentLoader.vue'
+import PageSkeleton from '~/components/loader/PageSkeleton.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -481,6 +523,10 @@ const sidebarCollapsed = ref(false)
 const isMobile = ref(false)
 const showLogoutConfirm = ref(false)
 const isLoggingOut = ref(false)
+const contentLoading = ref(false)
+let contentMinTimer = null
+let contentNavDone = false
+let contentMinTimeDone = false
 
 // User methods
 const getUserInitials = () => {
@@ -573,6 +619,49 @@ const closeMobileSidebar = () => {
     sidebarOpen.value = false
   }
 }
+
+function shouldShowContentLoader(to, from) {
+  // Do NOT show for login/logout (handled by full-page loader)
+  if (to.path === '/auth/login' ||
+      to.query.from === 'logout' ||
+      to.query.registered === 'true' ||
+      from.path === '/auth/login' ||
+      from.query.from === 'logout' ||
+      from.query.registered === 'true') {
+    return false
+  }
+  return true
+}
+
+function startContentLoader() {
+  contentLoading.value = true
+  contentNavDone = false
+  contentMinTimeDone = false
+  if (contentMinTimer) clearTimeout(contentMinTimer)
+  contentMinTimer = setTimeout(() => {
+    contentMinTimeDone = true
+    maybeHideContentLoader()
+  }, 700) // 0.7s minimum for content
+}
+
+function maybeHideContentLoader() {
+  if (contentNavDone && contentMinTimeDone) {
+    contentLoading.value = false
+  }
+}
+
+router.beforeEach((to, from, next) => {
+  if (shouldShowContentLoader(to, from)) {
+    startContentLoader()
+  }
+  next()
+})
+router.afterEach((to, from) => {
+  if (shouldShowContentLoader(to, from)) {
+    contentNavDone = true
+    maybeHideContentLoader()
+  }
+})
 
 // Lifecycle
 onMounted(() => {

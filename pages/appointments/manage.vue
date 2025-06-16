@@ -2,6 +2,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router'; // Assuming useRouter is from vue-router for Nuxt 3 compatibility
 import { useAuthStore } from '~/stores/auth'; // Assuming your auth store is correctly path-aliased
+import ContentLoader from '~/components/loader/ContentLoader.vue'
+import PageSkeleton from '~/components/loader/PageSkeleton.vue'
 
 // Define the Appointment interface with added patientName
 interface Appointment {
@@ -319,11 +321,64 @@ async function completeAppointment() {
       </div>
 
       <!-- Loading State -->
-      <div v-if="pending" class="flex items-center justify-center py-12">
-        <div class="text-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p class="text-gray-600 font-medium">Loading all appointments...</p>
-        </div>
+      <div v-if="pending">
+        <PageSkeleton>
+          <!-- Header Section -->
+          <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <div class="skeleton skeleton-text w-64 h-8 mb-2"></div>
+                <div class="skeleton skeleton-text w-96 h-4"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Section -->
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <!-- Table Header -->
+            <div class="grid grid-cols-6 gap-4 p-4 bg-gray-50 border-b">
+              <div class="col-span-2">
+                <div class="skeleton skeleton-text w-24"></div>
+              </div>
+              <div class="col-span-1">
+                <div class="skeleton skeleton-text w-16"></div>
+              </div>
+              <div class="col-span-1">
+                <div class="skeleton skeleton-text w-20"></div>
+              </div>
+              <div class="col-span-1">
+                <div class="skeleton skeleton-text w-16"></div>
+              </div>
+              <div class="col-span-1">
+                <div class="skeleton skeleton-text w-16"></div>
+              </div>
+            </div>
+            
+            <!-- Table Rows -->
+            <div v-for="i in 5" :key="i" class="grid grid-cols-6 gap-4 p-4 border-b border-gray-100">
+              <div class="col-span-2 flex items-center space-x-3">
+                <div class="skeleton-avatar"></div>
+                <div class="space-y-2">
+                  <div class="skeleton skeleton-text w-32"></div>
+                  <div class="skeleton skeleton-text w-24"></div>
+                </div>
+              </div>
+              <div class="col-span-1 flex items-center">
+                <div class="skeleton skeleton-text w-20"></div>
+              </div>
+              <div class="col-span-1 flex items-center">
+                <div class="skeleton skeleton-text w-24"></div>
+              </div>
+              <div class="col-span-1 flex items-center">
+                <div class="skeleton skeleton-text w-16"></div>
+              </div>
+              <div class="col-span-1 flex items-center justify-end space-x-2">
+                <div class="skeleton-button w-8"></div>
+                <div class="skeleton-button w-8"></div>
+              </div>
+            </div>
+          </div>
+        </PageSkeleton>
       </div>
 
       <!-- Error State -->

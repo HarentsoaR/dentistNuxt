@@ -4,6 +4,8 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '~/stores/auth';
 import { format, isSameMonth, addDays } from 'date-fns'; // Removed isPast, isFuture as they are implicitly handled
+import ContentLoader from '~/components/loader/ContentLoader.vue'
+import PageSkeleton from '~/components/loader/PageSkeleton.vue'
 
 // Define Appointment interface
 interface Appointment {
@@ -264,15 +266,61 @@ function resetFilters() {
       </div>
 
       <!-- Loading State with enhanced animation -->
-      <div v-if="overallPending" class="flex flex-col items-center justify-center py-20">
-        <div class="relative">
-          <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
-          <div class="absolute top-0 left-0 w-full h-full animate-pulse">
-            <div class="h-full w-full rounded-full bg-blue-100 opacity-50"></div>
+      <div v-if="overallPending">
+        <PageSkeleton>
+          <!-- Header Section -->
+          <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <div class="skeleton skeleton-text w-64 h-8 mb-2"></div>
+                <div class="skeleton skeleton-text w-96 h-4"></div>
+              </div>
+              <div class="skeleton-button w-40"></div>
+            </div>
           </div>
-        </div>
-        <p class="text-xl text-gray-600 font-semibold mt-6 animate-pulse">Loading your appointments...</p>
-        <p class="text-gray-500 mt-2">Please wait a moment while we load your dental journey.</p>
+
+          <!-- Appointments List -->
+          <div class="space-y-6">
+            <div v-for="i in 3" :key="i" class="skeleton-card">
+              <!-- Header -->
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                  <div class="skeleton-avatar"></div>
+                  <div class="space-y-2">
+                    <div class="skeleton skeleton-text w-32"></div>
+                    <div class="skeleton skeleton-text w-24"></div>
+                  </div>
+                </div>
+                <div class="skeleton skeleton-text w-24 h-6 rounded-full"></div>
+              </div>
+              
+              <!-- Content -->
+              <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <div class="skeleton skeleton-text w-20"></div>
+                    <div class="skeleton skeleton-text w-32"></div>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="skeleton skeleton-text w-20"></div>
+                    <div class="skeleton skeleton-text w-32"></div>
+                  </div>
+                </div>
+                
+                <div class="space-y-2">
+                  <div class="skeleton skeleton-text w-24"></div>
+                  <div class="skeleton skeleton-text w-full"></div>
+                </div>
+              </div>
+              
+              <!-- Footer -->
+              <div class="mt-6 flex justify-end space-x-3">
+                <div class="skeleton-button w-24"></div>
+                <div class="skeleton-button w-24"></div>
+              </div>
+            </div>
+          </div>
+        </PageSkeleton>
       </div>
 
       <!-- Error State with retry option -->

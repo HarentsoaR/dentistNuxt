@@ -50,14 +50,15 @@ let isScrolling = false
 const mouseX = ref(0.5)
 const mouseY = ref(0.3)
 const gradientStyle = computed(() => {
-  // Restore to original large, immersive radial gradient
   const x = (mouseX.value * 100).toFixed(1)
   const y = (mouseY.value * 100).toFixed(1)
   return {
-    background: `radial-gradient(circle at ${x}% ${y}%, #00dc82 0%, #38bdf8 40%, #0e1628 80%, #090a1a 100%)`,
-    transition: 'background 0.3s cubic-bezier(0.4,0,0.2,1)',
+    background: `radial-gradient(circle at ${x}% ${y}%, #00dc82 0%, #38bdf8 35%, #0e1628 70%, #090a1a 100%)`,
+    transition: 'background 0.5s cubic-bezier(0.4,0,0.2,1)',
     width: '100vw',
     height: '100vh',
+    transform: 'scale(1.2)', // Make gradient bigger
+    transformOrigin: 'center',
   }
 })
 
