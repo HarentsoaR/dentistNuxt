@@ -1,12 +1,18 @@
 <template>
-  <div class="min-h-screen flex flex-col relative overflow-hidden">
-    <!-- Dynamic Gradient Background -->
-    <div
-      class="fixed inset-0 -z-10 pointer-events-none"
-      :style="gradientStyle"
-    ></div>
+  <div class="min-h-screen flex flex-col relative overflow-hidden custom-gradient-bg">
+    <!-- Removed SVG tools overlay -->
+    <!-- Tooltip for feedback (if needed) -->
+    <transition name="fade">
+      <div
+        v-if="tooltip"
+        class="fixed left-1/2 top-24 transform -translate-x-1/2 bg-white/90 text-blue-900 px-4 py-2 rounded shadow-lg z-20 text-sm font-medium"
+        style="pointer-events:none;"
+      >
+        {{ tooltip }}
+      </div>
+    </transition>
 
-    <!-- Main content area - centered with dynamic width -->
+    <!-- Main content area -->
     <div class="flex-1 flex items-center justify-center px-4 py-12">
       <Transition
         enter-active-class="transition-all duration-1000 ease-out"
@@ -22,7 +28,7 @@
       </Transition>
     </div>
 
-    <!-- Footer - always at bottom -->
+    <!-- Footer -->
     <footer class="relative text-center py-6 text-sm text-gray-500 z-10">
       <p>&copy; 2025 HarentsoaR DentaCare Pro. All rights reserved.</p>
     </footer>
@@ -33,105 +39,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
+import { ref } from 'vue'
 import { provide } from 'vue'
 import { useRoute } from 'vue-router'
-import { useNotificationStore } from '~/stores/notification'
 import NotificationToast from '~/components/NotificationToast.vue'
 
 const route = useRoute()
-const notificationStore = useNotificationStore()
 const showForm = ref(false)
-const headerSection = ref(null)
-const formSection = ref(null)
-let isScrolling = false
+const activeBg = ref(null)
+const tooltip = ref('')
 
-// --- Dynamic Gradient State ---
-const mouseX = ref(0.5)
-const mouseY = ref(0.3)
-const gradientStyle = computed(() => {
-  const x = (mouseX.value * 100).toFixed(1)
-  const y = (mouseY.value * 100).toFixed(1)
-  return {
-    background: `radial-gradient(circle at ${x}% ${y}%, #00dc82 0%, #38bdf8 35%, #0e1628 70%, #090a1a 100%)`,
-    transition: 'background 0.5s cubic-bezier(0.4,0,0.2,1)',
-    width: '100vw',
-    height: '100vh',
-    transform: 'scale(1.2)', // Make gradient bigger
-    transformOrigin: 'center',
-  }
-})
-
-function handleMouseMove(e) {
-  const w = window.innerWidth
-  const h = window.innerHeight
-  mouseX.value = e.clientX / w
-  mouseY.value = e.clientY / h
+function onBgClick(item) {
+  // No SVG tool logic needed
 }
 
-onMounted(() => {
-  window.addEventListener('mousemove', handleMouseMove)
-  // Show welcome notification when coming from logout
-  if (route.query.from === 'logout') {
-    notificationStore.success(
-      'Déconnexion réussie',
-      'Vous avez été déconnecté avec succès. Veuillez vous reconnecter pour continuer.',
-      5000
-    )
-  }
-  window.addEventListener('scroll', handleScroll, { passive: true })
-})
-
-onUnmounted(() => {
-  window.removeEventListener('mousemove', handleMouseMove)
-  window.removeEventListener('scroll', handleScroll)
-})
-// --- End Dynamic Gradient ---
-
-// Provide the toggle function to child components
-const toggleForm = async () => {
-  if (!showForm.value) {
-    showForm.value = true
-    await nextTick()
-    setTimeout(() => {
-      if (formSection.value) {
-        formSection.value.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
-        })
-      }
-    }, 100)
-  } else {
-    if (headerSection.value) {
-      headerSection.value.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-      })
-    }
-    setTimeout(() => {
-      showForm.value = false
-    }, 300)
-  }
-}
-
-const handleScroll = () => {
-  if (isScrolling) return
-  const scrollY = window.scrollY
-  const windowHeight = window.innerHeight
-  if (showForm.value && scrollY < windowHeight * 0.1) {
-    isScrolling = true
-    showForm.value = false
-    window.scrollTo({ 
-      top: 0, 
-      behavior: 'smooth' 
-    })
-    setTimeout(() => {
-      isScrolling = false
-    }, 1000)
-  }
-}
-
-provide('toggleForm', toggleForm)
+provide('toggleForm', () => {})
 provide('showForm', showForm)
 
 const getContainerClass = () => {
@@ -147,5 +69,19 @@ const getContainerClass = () => {
 </script>
 
 <style scoped>
-/* No more background blobs or pulse animation */
+.custom-gradient-bg {
+  background: linear-gradient(135deg,
+    #FFFFFF 0%,
+    #EFE2CE 25%,
+    #D5ECEB 50%,
+    #E4E4E4 75%,
+    #F6FFFF 100%
+  );
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>

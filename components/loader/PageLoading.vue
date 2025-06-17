@@ -1,172 +1,86 @@
 <template>
-  <div class="fixed inset-0 z-[9999] flex flex-col items-center justify-center font-inter" :style="gradientStyle">
-    <div class="flex flex-col items-center">
-      <!-- Animated Logo (Tooth Icon) -->
-      <div class="relative mb-6">
-        <svg class="logo-big animate-float" fill="none" viewBox="0 0 48 48" style="filter: drop-shadow(0 4px 16px #00dc82cc);">
-          <circle cx="24" cy="24" r="22" fill="#38bdf8"/>
-          <path d="M24 10c-4.418 0-8 3.582-8 8 0 7 8 20 8 20s8-13 8-20c0-4.418-3.582-8-8-8zm0 11a3 3 0 110-6 3 3 0 010 6z" fill="#fff"/>
-        </svg>
-        <div class="absolute inset-0 rounded-full bg-[#00dc82] opacity-20 animate-pulse-logo"></div>
+  <div class="min-h-screen w-full flex flex-col items-center justify-center custom-gradient-bg relative overflow-hidden">
+    <!-- Tooth Icon (matching auth.vue style) -->
+    <transition name="pop-float" appear>
+      <div class="flex justify-center mb-6" key="logo">
+        <div class="relative flex items-center justify-center">
+          <div class="absolute inset-0 rounded-full backdrop-blur-md bg-black/30 shadow-2xl z-0"></div>
+          <div class="relative z-10 animate-float">
+            <Icon name="twemoji:tooth" class="logo-big drop-shadow-lg"
+              style="filter: drop-shadow(0 2px 12px #00dc82cc);" />
+          </div>
+        </div>
       </div>
+    </transition>
 
-      <!-- Animated Title (DentaCare Pro) -->
-      <h1 class="text-4xl md:text-5xl font-semibold bg-gradient-to-r from-[#00dc82] via-[#38bdf8] to-[#0e1628] bg-clip-text text-transparent animate-shimmer-text text-center mb-2 stunning-title" style="text-shadow: 0 2px 16px #0e1628, 0 1px 0 #fff, 0 0 8px #38bdf8;">
-        <span class="inline-block animate-fade-in-up-stagger" style="animation-delay: 0.1s">Denta</span>
-        <span class="inline-block animate-fade-in-up-stagger" style="animation-delay: 0.2s">Care</span>
-        <span class="inline-block animate-fade-in-up-stagger" style="animation-delay: 0.3s">Pro</span>
-      </h1>
+    <!-- Animated App Name -->
+    <div class="mb-4">
+      <ShinyText
+        text="DentaCare Pro"
+        className="text-4xl font-bold tracking-tight text-center"
+        :speed="3"
+      />
+    </div>
 
-      <!-- Animated Slogan -->
-      <p class="text-gray-100 font-medium text-lg md:text-xl animate-fade-in-slogan stunning-slogan">Professional Dental Care Management</p>
+    <!-- Animated Loading Text -->
+    <BlurText
+      text="Loading your professional dental experience..."
+      class="text-gray-700 font-medium text-lg text-center w-full flex justify-center"
+      animateBy="words"
+      direction="top"
+    />
 
-      <!-- Progress Indicator (Optional, but good for UX) -->
-      <div class="mt-10 w-64 h-2 bg-gray-700 rounded-full overflow-hidden shadow-inner">
-        <div class="h-full bg-gradient-to-r from-blue-400 to-teal-400 rounded-full animate-progress-bar"></div>
-      </div>
+    <!-- Optional: Animated Loader Spinner -->
+    <div class="mt-8 flex justify-center">
+      <svg class="animate-spin h-10 w-10 text-[#38bdf8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-70" fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+      </svg>
     </div>
   </div>
 </template>
 
-<script setup>
-import { computed } from 'vue';
-
-const gradientStyle = computed(() => ({
-  // A professional, deep blue-indigo radial gradient
-  background: 'radial-gradient(circle at 50% 30%, #1a2a4b 0%, #2a3a60 35%, #0e1628 70%, #090a1a 100%)',
-  width: '100vw',
-  height: '100vh',
-  transition: 'background 0.5s cubic-bezier(0.4,0,0.2,1)',
-  // transform: 'scale(1.05)', // Slight scale to hide edges if needed, but not necessary with full vw/vh
-  // transformOrigin: 'center',
-}));
+<script setup lang="ts">
+import ShinyText from '~/components/ui/Text/ShinyText.vue'
+import BlurText from '~/components/ui/Text/BlurText.vue'
 </script>
 
 <style scoped>
+.custom-gradient-bg {
+  background: linear-gradient(135deg,
+    #FFFFFF 0%,
+    #EFE2CE 25%,
+    #D5ECEB 50%,
+    #E4E4E4 75%,
+    #F6FFFF 100%
+  );
+}
 .logo-big {
   width: 5em;
   height: 5em;
-  max-width: 100px; /* Ensure responsiveness on smaller screens */
+  max-width: 100px;
   max-height: 100px;
+  margin-bottom: 0.5em;
 }
-
-/* Floating Animation for Logo */
 @keyframes float {
   0%, 100% {
     transform: translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-12px) rotate(3deg); /* Slightly more pronounced float */
+    transform: translateY(-10px) rotate(2deg);
   }
 }
 .animate-float {
-  animation: float 4s ease-in-out infinite; /* Slightly slower float */
+  animation: float 3s ease-in-out infinite;
 }
-
-/* Pulse Animation for Logo */
-@keyframes pulse-logo {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.2;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.4;
-  }
+.pop-float-enter-active,
+.pop-float-leave-active {
+  transition: all 0.6s cubic-bezier(.22,1,.36,1);
 }
-.animate-pulse-logo {
-  animation: pulse-logo 2.5s ease-out infinite;
-}
-
-/* Text Shimmer Effect */
-@keyframes shimmer-text {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-}
-.animate-shimmer-text {
-  background-size: 200% auto;
-  animation: shimmer-text 2.5s linear infinite;
-  -webkit-background-clip: text; /* For gradient text effect */
-  background-clip: text;
-  text-fill-color: transparent; /* For gradient text effect */
-}
-
-/* Staggered Fade-in-up Animation for Title Words */
-@keyframes fade-in-up-stagger {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fade-in-up-stagger {
-  animation: fade-in-up-stagger 0.6s ease-out forwards;
-  opacity: 0; /* Hidden by default until animation runs */
-}
-
-/* Fade-in for Slogan */
-@keyframes fade-in-slogan {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-.animate-fade-in-slogan {
-  animation: fade-in-slogan 1s ease-out forwards;
-  animation-delay: 0.7s; /* Delayed after title animation */
+.pop-float-enter-from,
+.pop-float-leave-to {
   opacity: 0;
-}
-
-/* Progress Bar Animation */
-@keyframes progress-bar {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
-}
-.animate-progress-bar {
-  animation: progress-bar 3s linear forwards;
-}
-
-/* Ensure font-inter is applied */
-.font-inter {
-  font-family: 'Inter', sans-serif;
-}
-
-.stunning-title {
-  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
-  font-size: 2.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  background: linear-gradient(90deg, #00dc82, #38bdf8, #0e1628, #38bdf8, #00dc82);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: shimmer-text 2.5s linear infinite;
-  text-shadow:
-    0 2px 24px #00dc82cc,
-    0 1px 0 #fff,
-    0 0 8px #38bdf8,
-    0 0 2px #0e1628;
-  transition: text-shadow 0.3s;
-}
-.stunning-slogan {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: #e0f7fa;
-  text-shadow: 0 1px 8px #38bdf8;
+  transform: scale(0.7) translateY(30px);
 }
 </style>

@@ -1,11 +1,13 @@
 <template>
   <div>
-    <transition name="fade-loader" appear>
-      <CustomLoading v-if="showLoader" />
+    <transition name="fade-loader" appear v-if="showLoader">
+      <CustomLoading />
     </transition>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <div v-else>
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </div>
   </div>
 </template>
 
@@ -21,6 +23,9 @@ let navDone = false
 let minTimeDone = false
 
 function shouldShowLoader(to, from) {
+  // Do not show loader if both routes are in the auth section
+  const isAuth = (route) => route.path.startsWith('/auth/')
+  if (isAuth(to) && isAuth(from)) return false
   // Show loader only for login/logout transitions
   if (to.path === '/auth/login' ||
       to.query.from === 'logout' ||
