@@ -11,7 +11,7 @@ const token = route.query.token
 if (typeof token === 'string') {
   // Save token (Pinia, cookie, etc.)
   authStore.setToken(token)
-  router.replace('/dashboard')
+  router.replace('/')
 } else {
   // Handle error or show a message
   router.replace('/auth/login?error=oauth')
