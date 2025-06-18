@@ -6,6 +6,7 @@ import { useNotificationStore } from '~/stores/notification';
 
 
 
+
 // Define the User structure based on your Go model
 interface User {
   id: string;
@@ -115,5 +116,34 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { user, token, isAuthenticated, userRole, register, login, logout, initializeAuth };
+  function setToken(newToken: string | null) {
+    token.value = newToken;
+  }
+
+  return {
+    user,
+    token,
+    isAuthenticated,
+    userRole,
+    register,
+    login,
+    logout,
+    initializeAuth,
+    setToken
+  };
 });
+
+export const useAuthStoreLegacy = defineStore('auth', {
+  state: () => ({
+    token: null as string | null,
+    // ...other state
+  }),
+  actions: {
+    setToken(token: string) {
+      this.token = token
+      // Optionally, persist token in localStorage or cookies
+      localStorage.setItem('auth_token', token)
+    },
+    // ...other actions
+  },
+})
