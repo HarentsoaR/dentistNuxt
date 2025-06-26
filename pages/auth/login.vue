@@ -186,8 +186,20 @@ const formHeader = ref<HTMLElement | null>(null);
 const justRegistered = computed(() => route.query.registered === 'true');
 const fromRegister = computed(() => route.query.from === 'register');
 
-// Show form immediately if coming from register page
-onMounted(() => {
+// Handle OAuth2 token in query string
+onMounted(async () => {
+  const token = route.query.token;
+  if (typeof token === 'string' && token.length > 0) {
+    try {
+      await authStore.setToken(token); // Save the token (implement setToken if needed)
+      router.replace('/');
+      return;
+    } catch (e) {
+      notificationStore.error('OAuth Login Failed', 'Could not log in with OAuth token.', 5000);
+    }
+  }
+
+  // Show form immediately if coming from register page
   if (fromRegister.value || justRegistered.value) {
     showForm.value = true;
     nextTick(() => {
